@@ -1,0 +1,234 @@
+'use client'
+
+import Link from 'next/link'
+import {
+  FaWhatsapp,
+  FaPhone,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaFacebook,
+  FaInstagram,
+  FaYoutube,
+  FaTiktok,
+} from 'react-icons/fa'
+import { motion } from 'framer-motion'
+
+const Footer = () => {
+  const socialLinks = [
+    { icon: FaFacebook, href: '#', color: '#1877F2', label: 'Facebook' },
+    { icon: FaInstagram, href: '#', color: '#E4405F', label: 'Instagram' },
+    { icon: FaYoutube, href: '#', color: '#FF0000', label: 'YouTube' },
+    { icon: FaTiktok, href: '#', color: '#000000', label: 'TikTok' },
+    { icon: FaWhatsapp, href: 'https://wa.me/525538788046', color: '#25D366', label: 'WhatsApp' },
+  ]
+
+  const quickLinks = [
+    { href: '#servicios', label: 'Servicios' },
+    { href: '#proceso', label: 'Proceso' },
+    { href: '#galeria', label: 'Galería' },
+    { href: '#testimonios', label: 'Testimonios' },
+    { href: '#contacto', label: 'Contacto' },
+  ]
+
+  return (
+    <footer className="relative bg-gradient-to-br from-[#1a0f0a] via-[#2c1810] to-[#1a0f0a] text-white/80 overflow-hidden">
+      {/* Línea decorativa superior */}
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#c49a6c] to-transparent opacity-50" />
+
+      {/* Partículas decorativas */}
+      <div className="absolute inset-0 opacity-30">
+        <div className="absolute top-10 left-10 w-72 h-72 bg-[#c49a6c] rounded-full filter blur-3xl animate-pulse" />
+        <div
+          className="absolute bottom-10 right-10 w-96 h-96 bg-[#d4a373] rounded-full filter blur-3xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        />
+      </div>
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+          {/* Columna 1: Marca */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <h3 className="text-3xl font-bold text-[#c49a6c] font-playfair">Hnos. Flores</h3>
+            <p className="text-white/60 text-sm leading-relaxed max-w-xs">
+              Más de 20 años devolviendo la vida a tus tapetes con técnicas tradicionales y pasión
+              por el detalle.
+            </p>
+            <div className="flex flex-wrap gap-3 pt-2">
+              {socialLinks.map((social, index) => (
+                <motion.a
+                  key={index}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={social.label}
+                  whileHover={{
+                    scale: 1.15,
+                    y: -3,
+                    boxShadow: `0 0 20px ${social.color}40`,
+                  }}
+                  whileTap={{ scale: 0.85 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                  className="relative w-11 h-11 rounded-full bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center text-white/70 hover:text-white transition-all duration-300 group"
+                >
+                  <social.icon className="text-lg group-hover:scale-110 transition-transform duration-300" />
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 text-[10px] bg-black/80 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                    {social.label}
+                  </span>
+                </motion.a>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Columna 2: Enlaces Rápidos */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <h4 className="text-lg font-bold text-white relative inline-block">
+              Enlaces Rápidos
+              <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#c49a6c] rounded-full" />
+            </h4>
+            <ul className="space-y-2.5">
+              {quickLinks.map((link, index) => (
+                <motion.li
+                  key={index}
+                  whileHover={{ x: 6 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                >
+                  <Link
+                    href={link.href}
+                    className="text-white/60 hover:text-[#c49a6c] transition-colors duration-300 text-sm flex items-center gap-2 group"
+                  >
+                    <span className="w-1 h-1 rounded-full bg-[#c49a6c]/30 group-hover:bg-[#c49a6c] transition-colors duration-300" />
+                    {link.label}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Columna 3: Contacto */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <h4 className="text-lg font-bold text-white relative inline-block">
+              Contacto
+              <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#c49a6c] rounded-full" />
+            </h4>
+            <ul className="space-y-3">
+              {[
+                { icon: FaPhone, text: '55 3878-8046', href: 'tel:5538788046' },
+                { icon: FaWhatsapp, text: 'WhatsApp', href: 'https://wa.me/525538788046' },
+                {
+                  icon: FaEnvelope,
+                  text: 'lavadodetapeteshnozfloresflore@gmail.com',
+                  href: 'mailto:lavadodetapeteshnozfloresflore@gmail.com',
+                  small: true,
+                },
+                { icon: FaMapMarkerAlt, text: 'Alcaldía Iztapalapa #6, CDMX', href: '#' },
+              ].map((item, index) => (
+                <motion.li
+                  key={index}
+                  whileHover={{ x: 6 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                >
+                  <a
+                    href={item.href}
+                    className="flex items-center gap-3 text-white/60 hover:text-[#c49a6c] transition-colors duration-300 group"
+                  >
+                    <span className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-[#c49a6c]/20 transition-colors duration-300 flex-shrink-0">
+                      <item.icon className="text-sm" />
+                    </span>
+                    <span className={`text-sm ${item.small ? 'text-xs' : ''}`}>{item.text}</span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Columna 4: Horario y CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="space-y-4"
+          >
+            <h4 className="text-lg font-bold text-white relative inline-block">
+              Horario
+              <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-[#c49a6c] rounded-full" />
+            </h4>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center gap-3 text-white/60">
+                <span className="w-2 h-2 rounded-full bg-emerald-400/50" />
+                <span>
+                  Lunes a Viernes: <span className="text-white">9am - 6pm</span>
+                </span>
+              </li>
+              <li className="flex items-center gap-3 text-white/60">
+                <span className="w-2 h-2 rounded-full bg-emerald-400/50" />
+                <span>
+                  Sábados: <span className="text-white">9am - 2pm</span>
+                </span>
+              </li>
+              <li className="flex items-center gap-3 text-white/60">
+                <span className="w-2 h-2 rounded-full bg-red-400/50" />
+                <span>
+                  Domingos: <span className="text-white/40">Cerrado</span>
+                </span>
+              </li>
+            </ul>
+
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }} className="pt-4">
+              <a
+                href="https://wa.me/525538788046"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-[#c49a6c] to-[#a5784a] text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-[#c49a6c]/20 hover:shadow-xl hover:shadow-[#c49a6c]/30 transition-all duration-300"
+              >
+                <FaWhatsapp className="text-lg" />
+                ¡Recogida a domicilio!
+              </a>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Línea divisoria */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="border-t border-white/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4"
+        >
+          <p className="text-white/40 text-sm">
+            © {new Date().getFullYear()} Tapetes Hermanos Flores. Todos los derechos reservados.
+          </p>
+          <div className="flex items-center gap-6 text-xs text-white/30">
+            <a href="#" className="hover:text-[#c49a6c] transition-colors">
+              Aviso de privacidad
+            </a>
+            <a href="#" className="hover:text-[#c49a6c] transition-colors">
+              Términos y condiciones
+            </a>
+          </div>
+        </motion.div>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer

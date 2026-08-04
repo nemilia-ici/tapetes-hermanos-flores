@@ -1,0 +1,78 @@
+import Link from 'next/link'
+import { FaWhatsapp, FaPhone, FaEnvelope, FaMapMarkerAlt, FaFacebook, FaInstagram } from 'react-icons/fa'
+
+const Footer = () => {
+  return (
+    <footer className="bg-[#2c1810] text-white/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div>
+            <h3 className="text-xl font-bold text-[#c49a6c] mb-4">Hnos. Flores</h3>
+            <p className="text-sm text-white/60">Más de 20 años devolviendo la vida a tus tapetes con técnicas tradicionales.</p>
+            <div className="flex gap-4 mt-4">
+              <a href="#" className="text-white/60 hover:text-[#c49a6c] transition-colors">
+                <FaFacebook size={20} />
+              </a>
+              <a href="#" className="text-white/60 hover:text-[#c49a6c] transition-colors">
+                <FaInstagram size={20} />
+              </a>
+              <a href="https://wa.me/525538788046" className="text-white/60 hover:text-[#c49a6c] transition-colors">
+                <FaWhatsapp size={20} />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4">Enlaces Rápidos</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link href="#servicios" className="hover:text-[#c49a6c] transition-colors">Servicios</Link></li>
+              <li><Link href="#proceso" className="hover:text-[#c49a6c] transition-colors">Proceso</Link></li>
+              <li><Link href="#galeria" className="hover:text-[#c49a6c] transition-colors">Galería</Link></li>
+              <li><Link href="#testimonios" className="hover:text-[#c49a6c] transition-colors">Testimonios</Link></li>
+              <li><Link href="#contacto" className="hover:text-[#c49a6c] transition-colors">Contacto</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4">Contacto</h4>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center gap-2">
+                <FaPhone className="text-[#c49a6c]" />
+                <a href="tel:5538788046" className="hover:text-[#c49a6c] transition-colors">55 3878-8046</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaWhatsapp className="text-[#c49a6c]" />
+                <a href="https://wa.me/525538788046" className="hover:text-[#c49a6c] transition-colors">WhatsApp</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaEnvelope className="text-[#c49a6c]" />
+                <a href="mailto:lavadodetapeteshnozfloresflore@gmail.com" className="hover:text-[#c49a6c] transition-colors text-xs">
+                  lavadodetapeteshnozfloresflore@gmail.com
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaMapMarkerAlt className="text-[#c49a6c]" />
+                <span>Alcaldía Iztapalapa #6, CDMX</span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-white mb-4">Horario</h4>
+            <ul className="space-y-1 text-sm">
+              <li>Lunes a Viernes: 9am - 6pm</li>
+              <li>Sábados: 9am - 2pm</li>
+              <li className="text-white/40 mt-2">¡Recogida a domicilio!</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-white/40">
+          © {new Date().getFullYear()} Tapetes Hermanos Flores. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+  )
+}
+
+export default Footer
