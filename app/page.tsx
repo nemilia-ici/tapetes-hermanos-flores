@@ -401,6 +401,20 @@ window.toggleDarkMode=function(){document.body.classList.toggle('dark-mode'); co
 </script>
   <script src="/js/validacion.js"></script>
 <script src="/js/menu.js"></script>
+
+<!--FOOTER-->
+<footer style="background: #2c1810; color: #ffffffcc; padding: 2rem 0; text-align: center; border-top: 1px solid #c49a6c33;">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem;">
+        <p style="margin: 0; font-size: 0.9rem; opacity: 0.8;">
+            © 2025 Tapetes Hermanos Flores. Todos los derechos reservados.
+        </p>
+        <p style="margin: 4px 0 0; font-size: 0.7rem; opacity: 0.5;">
+            Powered by <a href="https://nemilia.com" target="_blank" style="color: #c49a6c; text-decoration: none; font-weight: 500;">NEMILIA</a>
+        </p>
+    </div>
+</footer>
+
+
 </body>
 </html>
       `
