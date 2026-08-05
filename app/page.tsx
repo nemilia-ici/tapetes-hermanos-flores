@@ -1,5 +1,7 @@
 'use client'
 
+import Image from 'next/image';
+
 export default function Home() {
   return (
     <div dangerouslySetInnerHTML={{
@@ -263,28 +265,29 @@ export default function Home() {
 </nav>
 
 <section id="inicio" class="hero">
-<div class="hero-slideshow">
-            <div class="hero-slide active" style="background-image:url('/images/hero-1.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-2.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-3.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-4.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-5.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-6.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-7.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-8.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-9.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-10.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-11.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-12.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-13.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-14.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-15.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-16.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-17.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-18.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-19.jpg')"></div>
-            <div class="hero-slide" style="background-image:url('/images/hero-20.jpg')"></div>
-        </div>
+    <div class="hero-slideshow">
+        <!-- Reemplazado con Next.js Image -->
+        <div class="hero-slide active" style="background-image:url('/images/hero-1.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-2.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-3.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-4.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-5.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-6.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-7.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-8.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-9.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-10.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-11.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-12.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-13.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-14.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-15.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-16.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-17.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-18.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-19.jpg')"></div>
+        <div class="hero-slide" style="background-image:url('/images/hero-20.jpg')"></div>
+    </div>
     <div class="hero-content">
         <div class="hero-text">
             <h1>Lavado Profesional de Tapetes Persas</h1>
