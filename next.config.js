@@ -4,6 +4,18 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
 
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
+  images: {
+    unoptimized: true,
+  },
+
   async headers() {
     return [
       {
@@ -35,14 +47,6 @@ const nextConfig = {
   },
 
   allowedDevOrigins: ['192.168.3.24', 'localhost'],
-
-  // Ignorar errores de TypeScript y ESLint en producción
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 }
 
 module.exports = nextConfig
