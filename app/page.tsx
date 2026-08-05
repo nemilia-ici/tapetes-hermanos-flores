@@ -197,6 +197,27 @@ export default function Home() {
   color: white !important;
 }
     </style>
+
+/* RESPONSIVE - NAVBAR */
+@media (max-width: 768px) {
+    .slogan-nav {
+        display: none !important;
+    }
+    .logo-text {
+        font-size: 1.2rem !important;
+    }
+    .logo img {
+        width: 35px !important;
+        height: 35px !important;
+    }
+    .nav-links a {
+        font-size: 0.8rem !important;
+        padding: 8px 10px !important;
+    }
+}
+
+
+
 </head>
 <body>
 <div class="chatbot-container">
