@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react'
 
+import Image from 'next/image';
+
 export const Navbar = () => {
   const [isDark, setIsDark] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -41,7 +43,11 @@ export const Navbar = () => {
     <nav className={`navbar ${scrolled ? 'scrolled' : ''}`}>
       <div className="container nav-container">
         <div className="logo">
-          <img src="/images/Logo.jpg" alt="Hnos. Flores" />
+          
+
+
+         <Image src="/images/Logo.jpg" alt="Hnos. Flores" width={50} height={50} className="rounded-full border-2 border-[#c49a6c] object-cover" />
+
           <span className="logo-text">Hnos. Flores</span>
         </div>
         <div className="nav-links">
