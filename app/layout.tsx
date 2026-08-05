@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { Poppins, Playfair_Display } from 'next/font/google'
 import './globals.css'
-import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -44,8 +43,21 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
+      <head>
+        {/* Google Analytics */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-T6R13QTENS"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-T6R13QTENS');
+            `,
+          }}
+        />
+      </head>
       <body className={`${poppins.variable} ${playfair.variable} font-sans`}>
-        <GoogleAnalytics GA_MEASUREMENT_ID="G-TU_ID_AQUI" />
         {children}
       </body>
     </html>
