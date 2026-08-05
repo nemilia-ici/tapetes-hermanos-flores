@@ -30,26 +30,26 @@ async function validarDominio(email: string): Promise<{ valido: boolean; mensaje
 
     const mxRecords = await resolveMx(dominio)
     if (!mxRecords || mxRecords.length === 0) {
-      return { 
-        valido: false, 
-        mensaje: `El dominio "${dominio}" no existe o no puede recibir correos` 
+      return {
+        valido: false,
+        mensaje: `El dominio "${dominio}" no existe o no puede recibir correos`
       }
     }
 
     return { valido: true }
-  } catch (error) {
-    return { 
-      valido: false, 
-      mensaje: 'El dominio del email no es válido o no existe' 
+  } catch {
+    return {
+      valido: false,
+      mensaje: 'El dominio del email no es válido o no existe'
     }
   }
 }
 
 // ========== VALIDACIÓN 3: CUENTA EXISTENTE ==========
-async function validarCuenta(email: string): Promise<{ valido: boolean; mensaje?: string }> {
+async function validarCuenta(email: string, mensaje: string): Promise<{ valido: boolean; mensaje?: string }> {
   try {
     console.log(`🔍 Verificando cuenta: ${email}`)
-    
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.SMTP_PORT) || 587,
@@ -63,7 +63,6 @@ async function validarCuenta(email: string): Promise<{ valido: boolean; mensaje?
       socketTimeout: 20000,
     })
 
-    // ========== NUEVO CORREO DE BIENVENIDA / CONFIRMACIÓN ==========
     const validacionHtml = `
       <!DOCTYPE html>
       <html>
@@ -193,21 +192,16 @@ async function validarCuenta(email: string): Promise<{ valido: boolean; mensaje?
           </div>
           <div class="content">
             <p class="saludo">¡Gracias por contactarnos! 👋</p>
-            
             <p>Hemos recibido tu mensaje y en breve nos pondremos en contacto contigo para atender tu solicitud.</p>
-
             <div class="mensaje-recibido">
               <p><strong>📝 Tu mensaje:</strong><br>${mensaje}</p>
             </div>
-
             <p style="margin-top: 20px;"><strong>📞 ¿Necesitas atención inmediata?</strong><br>
             Contáctanos directamente por WhatsApp o llámanos:</p>
-
             <div class="contacto-buttons">
               <a href="https://wa.me/525538788046?text=Hola,%20me%20comunico%20por%20el%20mensaje%20que%20envié%20en%20la%20página%20web" class="button button-whatsapp">📱 WhatsApp</a>
               <a href="tel:5538788046" class="button button-phone">📞 55 3878-8046</a>
             </div>
-
             <p style="font-size: 14px; color: #6b5843; margin-top: 10px;">
               Estamos a tus órdenes de <strong>Lunes a Viernes 9am - 6pm</strong> y <strong>Sábados 9am - 2pm</strong>.
             </p>
@@ -230,30 +224,30 @@ async function validarCuenta(email: string): Promise<{ valido: boolean; mensaje?
       subject: '✅ Confirmación de contacto - Tapetes Hnos. Flores',
       html: validacionHtml,
     })
-    
+
     console.log(`✅ Correo de confirmación enviado a ${email}: ${info.messageId}`)
     return { valido: true }
-    
-  } catch (error: any) {
-    console.log(`❌ Error al verificar ${email}:`, error.message)
-    
-    const mensajeError = error.message || ''
-    if (mensajeError.includes('Address not found') || 
-        mensajeError.includes('User unknown') ||
-        mensajeError.includes('Recipient address rejected') ||
-        mensajeError.includes('550') ||
-        mensajeError.includes('Invalid recipient') ||
-        mensajeError.includes('Mailbox unavailable') ||
-        mensajeError.includes('No such user')) {
-      return { 
-        valido: false, 
-        mensaje: `El correo "${email}" no existe o no es válido. Por favor, verifica tu dirección de correo.` 
+
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+    console.log(`❌ Error al verificar ${email}:`, errorMessage)
+
+    if (errorMessage.includes('Address not found') ||
+        errorMessage.includes('User unknown') ||
+        errorMessage.includes('Recipient address rejected') ||
+        errorMessage.includes('550') ||
+        errorMessage.includes('Invalid recipient') ||
+        errorMessage.includes('Mailbox unavailable') ||
+        errorMessage.includes('No such user')) {
+      return {
+        valido: false,
+        mensaje: `El correo "${email}" no existe o no es válido. Por favor, verifica tu dirección de correo.`
       }
     }
-    
-    return { 
+
+    return {
       valido: true,
-      mensaje: 'No se pudo verificar la cuenta, pero intentaremos enviar tu mensaje.' 
+      mensaje: 'No se pudo verificar la cuenta, pero intentaremos enviar tu mensaje.'
     }
   }
 }
@@ -262,9 +256,9 @@ async function validarCuenta(email: string): Promise<{ valido: boolean; mensaje?
 function validarNoTemporal(email: string): { valido: boolean; mensaje?: string } {
   const dominio = email.split('@')[1].toLowerCase()
   if (DOMINIOS_TEMPORALES.includes(dominio)) {
-    return { 
-      valido: false, 
-      mensaje: `No se permiten correos temporales o desechables (${dominio}). Por favor, usa tu correo personal o empresarial.` 
+    return {
+      valido: false,
+      mensaje: `No se permiten correos temporales o desechables (${dominio}). Por favor, usa tu correo personal o empresarial.`
     }
   }
   return { valido: true }
@@ -279,16 +273,16 @@ export async function POST(request: NextRequest) {
 
     // ========== VALIDACIONES BÁSICAS ==========
     if (!nombre || nombre.length < 2) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: false,
-        error: 'El nombre debe tener al menos 2 caracteres' 
+        error: 'El nombre debe tener al menos 2 caracteres'
       }, { status: 400 })
     }
 
     if (!mensaje || mensaje.length < 10) {
-      return NextResponse.json({ 
+      return NextResponse.json({
         success: false,
-        error: 'El mensaje debe tener al menos 10 caracteres' 
+        error: 'El mensaje debe tener al menos 10 caracteres'
       }, { status: 400 })
     }
 
@@ -319,7 +313,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ========== VALIDACIÓN 3: CUENTA EXISTENTE ==========
-    const cuentaValida = await validarCuenta(email)
+    const cuentaValida = await validarCuenta(email, mensaje)
     if (!cuentaValida.valido) {
       return NextResponse.json({
         success: false,
@@ -465,8 +459,9 @@ export async function POST(request: NextRequest) {
       message: 'Mensaje enviado correctamente. Te contactaremos pronto.'
     })
 
-  } catch (error: any) {
-    console.error('❌ Error al enviar email:', error)
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+    console.error('❌ Error al enviar email:', errorMessage)
     return NextResponse.json({
       success: false,
       error: 'Error al enviar el mensaje. Por favor, intenta de nuevo más tarde.'
