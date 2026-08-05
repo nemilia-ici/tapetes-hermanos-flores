@@ -376,7 +376,7 @@ export default function Home() {
     </div>
 </section>
 
-<!-- SECCIÓN DE CONTACTO CORREGIDA -->
+<!-- SECCIÓN DE CONTACTO CORREGIDA CON CSRF -->
 <section id="contacto" class="contacto">
     <div class="container">
         <div class="section-header reveal"><h2>Contáctanos</h2><p>¡Cotiza tu limpieza sin compromiso!</p></div>
@@ -389,6 +389,7 @@ export default function Home() {
             </div>
             <div class="contact-form reveal">
                 <form id="contactForm">
+                    <input type="hidden" name="csrf-token" value="GENERATED_TOKEN" />
                     <div class="form-group"><input type="text" name="nombre" placeholder="Nombre completo" required></div>
                     <div class="form-group"><input type="email" name="email" placeholder="Correo electrónico" required></div>
                     <div class="form-group"><input type="tel" name="telefono" placeholder="Teléfono"></div>
