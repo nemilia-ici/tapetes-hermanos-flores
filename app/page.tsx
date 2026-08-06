@@ -199,6 +199,7 @@ export default function Home() {
     </style>
 
     /* RESPONSIVE - NAVBAR */
+    <style>
     @media (max-width: 768px) {
         .slogan-nav {
             display: none !important;
@@ -215,7 +216,7 @@ export default function Home() {
             padding: 8px 10px !important;
         }
     }
-
+    </style>
 </head>
 <body>
 <div class="chatbot-container">
