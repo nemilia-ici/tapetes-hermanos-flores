@@ -1,11 +1,18 @@
 import csrf from 'csrf';
 
-const csrfProtection = csrf({ cookie: true });
+const csrfProtection = csrf();
 
 export function generateCsrfToken(): string {
-  return csrfProtection.create('secret-key');
+  // Usar una clave secreta desde variables de entorno
+  const secret = process.env.CSRF_SECRET || 'fallback-secret-cambiame';
+  return csrfProtection.create(secret);
 }
 
 export function verifyCsrfToken(token: string): boolean {
-  return csrfProtection.verify('secret-key', token);
+  const secret = process.env.CSRF_SECRET || 'fallback-secret-cambiame';
+  try {
+    return csrfProtection.verify(secret, token);
+  } catch {
+    return false;
+  }
 }

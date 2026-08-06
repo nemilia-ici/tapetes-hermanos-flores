@@ -1,7 +1,7 @@
 // VALIDACIÓN COMPLETA CON CAPTURA DE ERRORES DEL BACKEND
 document.addEventListener("DOMContentLoaded", function() {
   console.log("✅ Validación avanzada cargada");
-  
+
   const form = document.getElementById("contactForm");
   if (!form) {
     console.error("❌ Formulario no encontrado");
@@ -227,9 +227,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
       console.log('📤 Enviando datos:', datos);
 
+      // Obtener el token CSRF
+      const csrfToken = document.querySelector('input[name="csrf-token"]');
+      if (!csrfToken || !csrfToken.value) {
+        throw new Error('Token CSRF no disponible');
+      }
+
       const response = await fetch('/api/contacto', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'x-csrf-token': csrfToken.value
+        },
         body: JSON.stringify(datos)
       });
 
@@ -248,7 +257,7 @@ document.addEventListener("DOMContentLoaded", function() {
         // Mostrar el error específico del backend
         const errorMsg = result.error || 'Error al enviar el mensaje';
         showMessage('❌ ' + errorMsg, 'error');
-        
+
         // Si el error es del email, resaltar el campo de email
         if (errorMsg.includes('email') || errorMsg.includes('correo')) {
           const emailInput = form.querySelector('input[name="email"]');

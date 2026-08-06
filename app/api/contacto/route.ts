@@ -1,8 +1,10 @@
 import { generateCsrfToken, verifyCsrfToken } from '@/lib/csrf';
+
 import { NextRequest, NextResponse } from 'next/server'
 import nodemailer from 'nodemailer'
 import dns from 'dns'
 import { promisify } from 'util'
+
 
 const resolveMx = promisify(dns.resolveMx)
 
@@ -267,6 +269,18 @@ function validarNoTemporal(email: string): { valido: boolean; mensaje?: string }
 
 export async function POST(request: NextRequest) {
   try {
+    // ================================================================
+    // 🔒 VERIFICACIÓN CSRF - DEBE SER LO PRIMERO
+    // ================================================================
+    const token = request.headers.get('x-csrf-token');
+    if (!token || !verifyCsrfToken(token)) {
+      return NextResponse.json({ 
+        success: false,
+        error: 'CSRF token inválido' 
+      }, { status: 403 });
+    }
+    // ================================================================
+    
     const body = await request.json()
     const { nombre, email, telefono, mensaje } = body
 
