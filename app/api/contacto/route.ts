@@ -51,7 +51,7 @@ async function validarDominio(email: string): Promise<{ valido: boolean; mensaje
 // ========== VALIDACIÓN 3: CUENTA EXISTENTE ==========
 async function validarCuenta(email: string, mensaje: string): Promise<{ valido: boolean; mensaje?: string }> {
   try {
-    console.log(`🔍 Verificando cuenta: ${email}`)
+    console.error(`🔍 Verificando cuenta: ${email}`)
 
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
@@ -228,12 +228,12 @@ async function validarCuenta(email: string, mensaje: string): Promise<{ valido: 
       html: validacionHtml,
     })
 
-    console.log(`✅ Correo de confirmación enviado a ${email}: ${info.messageId}`)
+    console.error(`✅ Correo de confirmación enviado a ${email}: ${info.messageId}`)
     return { valido: true }
 
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
-    console.log(`❌ Error al verificar ${email}:`, errorMessage)
+    console.error(`❌ Error al verificar ${email}:`, errorMessage)
 
     if (errorMessage.includes('Address not found') ||
         errorMessage.includes('User unknown') ||
@@ -270,24 +270,42 @@ function validarNoTemporal(email: string): { valido: boolean; mensaje?: string }
 export async function POST(request: NextRequest) {
   try {
     // ================================================================
-    // 🔒 VERIFICACIÓN CSRF - DEBE SER LO PRIMERO
+    // 🔒 VERIFICACIÓN CSRF - CON LOGS OBLIGATORIOS
     // ================================================================
     const token = request.headers.get('x-csrf-token');
-    if (!token || !verifyCsrfToken(token)) {
-      return NextResponse.json({ 
+    
+    console.error('🔍 [CSRF] Token recibido:', token ? 'SÍ (token presente)' : 'NO (token ausente)');
+    console.error('🔍 [CSRF] Longitud del token:', token ? token.length : 0);
+    console.error('🔍 [CSRF] CSRF_SECRET configurado:', process.env.CSRF_SECRET ? 'SÍ' : 'NO');
+    
+    if (!token) {
+      console.error('❌ [CSRF] Falló: Token ausente');
+      return NextResponse.json({
         success: false,
-        error: 'CSRF token inválido' 
+        error: 'CSRF token inválido: token no proporcionado'
+      }, { status: 403 });
+    }
+    
+    const isValid = verifyCsrfToken(token);
+    console.error('🔍 [CSRF] Resultado de verificación:', isValid ? 'VÁLIDO ✅' : 'INVÁLIDO ❌');
+    
+    if (!isValid) {
+      console.error('❌ [CSRF] Falló: Token inválido');
+      return NextResponse.json({
+        success: false,
+        error: 'CSRF token inválido'
       }, { status: 403 });
     }
     // ================================================================
-    
+
     const body = await request.json()
     const { nombre, email, telefono, mensaje } = body
 
-    console.log('📩 Datos recibidos:', { nombre, email, telefono, mensaje })
+    console.error('📩 Datos recibidos:', { nombre, email, telefono, mensaje })
 
     // ========== VALIDACIONES BÁSICAS ==========
     if (!nombre || nombre.length < 2) {
+      console.error('❌ Nombre inválido')
       return NextResponse.json({
         success: false,
         error: 'El nombre debe tener al menos 2 caracteres'
@@ -295,6 +313,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!mensaje || mensaje.length < 10) {
+      console.error('❌ Mensaje inválido')
       return NextResponse.json({
         success: false,
         error: 'El mensaje debe tener al menos 10 caracteres'
@@ -303,6 +322,7 @@ export async function POST(request: NextRequest) {
 
     // ========== VALIDACIÓN 1: FORMATO ==========
     if (!validarFormatoEmail(email)) {
+      console.error('❌ Formato de email inválido')
       return NextResponse.json({
         success: false,
         error: 'Email inválido. Debe tener el formato: ejemplo@correo.com'
@@ -312,6 +332,7 @@ export async function POST(request: NextRequest) {
     // ========== VALIDACIÓN 4: CORREO TEMPORAL ==========
     const noTemporal = validarNoTemporal(email)
     if (!noTemporal.valido) {
+      console.error('❌ Email temporal:', email)
       return NextResponse.json({
         success: false,
         error: noTemporal.mensaje
@@ -319,24 +340,33 @@ export async function POST(request: NextRequest) {
     }
 
     // ========== VALIDACIÓN 2: DOMINIO ==========
+    console.error('🔍 Validando dominio...')
     const dominioValido = await validarDominio(email)
     if (!dominioValido.valido) {
+      console.error('❌ Dominio inválido:', dominioValido.mensaje)
       return NextResponse.json({
         success: false,
         error: dominioValido.mensaje || 'El dominio del email no es válido'
       }, { status: 400 })
     }
+    console.error('✅ Dominio válido')
 
     // ========== VALIDACIÓN 3: CUENTA EXISTENTE ==========
+    console.error('🔍 Validando cuenta...')
     const cuentaValida = await validarCuenta(email, mensaje)
     if (!cuentaValida.valido) {
+      console.error('❌ Cuenta inválida:', cuentaValida.mensaje)
       return NextResponse.json({
         success: false,
         error: cuentaValida.mensaje || 'La cuenta de correo no es válida'
       }, { status: 400 })
     }
+    console.error('✅ Cuenta válida')
 
     // ========== CONFIGURAR TRANSPORTER ==========
+    console.error('🔧 Configurando transporter...')
+    console.error('🔧 SMTP_HOST:', process.env.SMTP_HOST || 'no configurado')
+    console.error('🔧 SMTP_USER:', process.env.SMTP_USER || 'no configurado')
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.SMTP_PORT) || 587,
@@ -350,124 +380,25 @@ export async function POST(request: NextRequest) {
       socketTimeout: 15000,
     })
 
+    // Verificar el transporter
+    await transporter.verify()
+    console.error('✅ Transporter verificado')
+
     // ========== CORREO PARA EL NEGOCIO ==========
-    const negocioHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f0eb; padding: 20px; }
-          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-          .header { text-align: center; border-bottom: 3px solid #c49a6c; padding-bottom: 20px; margin-bottom: 30px; }
-          .header h1 { color: #c49a6c; font-size: 28px; margin: 0; font-weight: 700; }
-          .header p { color: #8B7355; margin: 5px 0 0; }
-          .field { margin-bottom: 20px; }
-          .label { font-weight: 600; color: #2c1810; font-size: 14px; display: block; margin-bottom: 4px; }
-          .value { color: #4a3a2a; font-size: 16px; background: #f9f6f2; padding: 10px 14px; border-radius: 8px; }
-          .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e8e0d8; text-align: center; color: #8B7355; font-size: 13px; }
-          .badge { display: inline-block; background: #c49a6c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>🧶 Tapetes Hnos. Flores</h1>
-            <p>Nuevo mensaje de contacto</p>
-          </div>
-          <div class="field">
-            <span class="label">👤 Nombre</span>
-            <div class="value">${nombre}</div>
-          </div>
-          <div class="field">
-            <span class="label">📧 Email</span>
-            <div class="value">${email}</div>
-          </div>
-          ${telefono ? `<div class="field"><span class="label">📞 Teléfono</span><div class="value">${telefono}</div></div>` : ''}
-          <div class="field">
-            <span class="label">💬 Mensaje</span>
-            <div class="value">${mensaje}</div>
-          </div>
-          <div class="footer">
-            <span class="badge">NUEVO</span>
-            <p style="margin-top: 10px;">Este mensaje fue enviado desde el sitio web</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
-
-    // ========== CORREO DE CONFIRMACIÓN PARA EL CLIENTE ==========
-    const clienteHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <style>
-          body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f0eb; padding: 20px; }
-          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; padding: 45px 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
-          .header { text-align: center; border-bottom: 3px solid #c49a6c; padding-bottom: 20px; margin-bottom: 30px; }
-          .header h1 { color: #c49a6c; font-size: 28px; margin: 0; }
-          .content { color: #2c1810; line-height: 1.8; }
-          .content .saludo { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
-          .mensaje-recibido { background: #f9f6f2; padding: 18px 20px; border-radius: 10px; border-left: 4px solid #c49a6c; margin: 20px 0; }
-          .mensaje-recibido p { margin: 0; color: #4a3a2a; font-style: italic; }
-          .contacto-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin: 25px 0 10px; }
-          .button { display: inline-block; padding: 12px 24px; border-radius: 30px; text-decoration: none; font-weight: 600; font-size: 14px; flex: 1 1 auto; text-align: center; }
-          .button-whatsapp { background: #25D366; color: white; }
-          .button-whatsapp:hover { background: #1da851; }
-          .button-phone { background: #c49a6c; color: white; }
-          .button-phone:hover { background: #a5784a; }
-          .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e8e0d8; text-align: center; color: #8B7355; font-size: 13px; }
-          .footer .direccion { font-size: 12px; color: #b8a99a; }
-          @media (max-width: 480px) {
-            .container { padding: 24px 20px; }
-            .contacto-buttons { flex-direction: column; }
-            .button { width: 100%; }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header"><h1>🧶 Tapetes Hnos. Flores</h1></div>
-          <div class="content">
-            <p class="saludo">¡Gracias por contactarnos! 👋</p>
-            <p>Hemos recibido tu mensaje y en breve nos pondremos en contacto contigo para atender tu solicitud.</p>
-            <div class="mensaje-recibido">
-              <p><strong>📝 Tu mensaje:</strong><br>${mensaje}</p>
-            </div>
-            <p style="margin-top: 20px;"><strong>📞 ¿Necesitas atención inmediata?</strong><br>Contáctanos directamente por WhatsApp o llámanos:</p>
-            <div class="contacto-buttons">
-              <a href="https://wa.me/525538788046?text=Hola,%20me%20comunico%20por%20el%20mensaje%20que%20envi%C3%A9%20en%20la%20p%C3%A1gina%20web" class="button button-whatsapp">📱 WhatsApp</a>
-              <a href="tel:5538788046" class="button button-phone">📞 55 3878-8046</a>
-            </div>
-            <p style="font-size: 14px; color: #6b5843; margin-top: 10px;">
-              Estamos a tus órdenes de <strong>Lunes a Viernes 9am - 6pm</strong> y <strong>Sábados 9am - 2pm</strong>.
-            </p>
-          </div>
-          <div class="footer">
-            <p>🧶 Tapetes Hermanos Flores</p>
-            <p class="direccion">📍 Alcaldía Iztapalapa #6, CDMX</p>
-            <p style="font-size: 11px; color: #b8a99a; margin-top: 8px;">Este es un correo automático de confirmación.</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
-
-    // ========== ENVIAR CORREO AL NEGOCIO ==========
+    console.error('📧 Enviando correo al negocio...')
     await transporter.sendMail({
       from: process.env.SMTP_FROM,
       to: 'lavadodetapeteshnozfloresflore@gmail.com',
       subject: `📩 Nuevo mensaje de ${nombre}`,
-      html: negocioHtml,
+      html: `
+        <h1>Nuevo mensaje de contacto</h1>
+        <p><strong>Nombre:</strong> ${nombre}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Teléfono:</strong> ${telefono || 'No proporcionado'}</p>
+        <p><strong>Mensaje:</strong> ${mensaje}</p>
+      `
     })
-
-    // ========== ENVIAR CORREO DE CONFIRMACIÓN AL CLIENTE ==========
-    await transporter.sendMail({
-      from: process.env.SMTP_FROM,
-      to: email,
-      subject: `✅ Confirmación de contacto - Tapetes Hnos. Flores`,
-      html: clienteHtml,
-    })
+    console.error('✅ Correo al negocio enviado')
 
     return NextResponse.json({
       success: true,
@@ -477,9 +408,11 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
     console.error('❌ Error al enviar email:', errorMessage)
+    console.error('❌ Stack trace:', error instanceof Error ? error.stack : 'No stack available')
+    
     return NextResponse.json({
       success: false,
-      error: 'Error al enviar el mensaje. Por favor, intenta de nuevo más tarde.'
+      error: `Error al enviar el mensaje: ${errorMessage}`
     }, { status: 500 })
   }
 }
