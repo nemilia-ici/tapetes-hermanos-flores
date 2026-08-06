@@ -89,7 +89,6 @@ document.addEventListener("DOMContentLoaded", function() {
     messageDiv.className = 'form-message ' + type;
     messageDiv.textContent = message;
     messageDiv.style.display = 'block';
-    // Scroll al mensaje
     messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
@@ -128,6 +127,20 @@ document.addEventListener("DOMContentLoaded", function() {
       container.appendChild(errorDiv);
     } else {
       container.querySelector('.estado-icono').textContent = '';
+    }
+  }
+
+  function limpiarFormulario() {
+    // Limpiar todos los campos del formulario
+    form.querySelectorAll('input, textarea').forEach(function(campo) {
+      if (campo.type === 'submit') return;
+      campo.value = '';
+      actualizarEstado(campo, 'neutral');
+    });
+    
+    // Recargar el token CSRF
+    if (typeof loadCsrfToken === 'function') {
+      loadCsrfToken();
     }
   }
 
@@ -247,11 +260,10 @@ document.addEventListener("DOMContentLoaded", function() {
 
       if (response.ok) {
         showMessage('✅ ¡Mensaje enviado! Te contactaremos pronto.', 'success');
-        form.reset();
-        form.querySelectorAll('input, textarea').forEach(function(campo) {
-          if (campo.type === 'submit') return;
-          actualizarEstado(campo, 'neutral');
-        });
+        
+        // ✅ LIMPIAR EL FORMULARIO COMPLETAMENTE
+        limpiarFormulario();
+        
         setTimeout(hideMessage, 5000);
       } else {
         // Mostrar el error específico del backend
